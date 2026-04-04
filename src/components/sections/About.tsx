@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 export default function About() {
   const sectionRef  = useRef<HTMLElement>(null);
@@ -37,22 +37,42 @@ export default function About() {
         },
       });
 
-      // Typewriter: clip each code element left→right, line by line
+      // Typewriter: each line types at ~55 ms/char with random inter-line pauses
       const codeEls = codeRef.current?.querySelectorAll<HTMLElement>(".code-line code");
       if (codeEls && codeEls.length) {
         gsap.set(codeEls, { clipPath: "inset(0 100% 0 0)" });
-        gsap.to(codeEls, {
-          clipPath: "inset(0 0% 0 0)",
-          duration: 0.5,
-          ease: "steps(20)",
-          stagger: 0.42,
-          scrollTrigger: {
-            trigger: codeRef.current,
-            start: "top 75%",
-          },
-          onComplete() {
+
+        const lines = Array.from(codeEls);
+        let cumDelay = 0;
+
+        ScrollTrigger.create({
+          trigger: codeRef.current,
+          start: "top 75%",
+          once: true,
+          onEnter: () => {
+            lines.forEach((el) => {
+              const chars = Math.max(el.textContent?.length ?? 8, 1);
+              // 40–75 ms per character — varies per line for a human feel
+              const msPerChar = 40 + Math.random() * 35;
+              const dur = Math.max((chars * msPerChar) / 1000, 0.12);
+
+              gsap.to(el, {
+                clipPath: "inset(0 0% 0 0)",
+                duration: dur,
+                // one step per character → each step reveals exactly one char width
+                ease: `steps(${chars})`,
+                delay: cumDelay,
+              });
+
+              // Inter-line pause: 80–260 ms (simulates thinking before next line)
+              cumDelay += dur + 0.08 + Math.random() * 0.18;
+            });
+
+            // Cursor appears once the last line finishes typing
             const cursor = codeRef.current?.querySelector<HTMLElement>(".tw-cursor");
-            if (cursor) gsap.to(cursor, { opacity: 1, duration: 0 });
+            if (cursor) {
+              gsap.to(cursor, { opacity: 1, duration: 0, delay: cumDelay });
+            }
           },
         });
       }

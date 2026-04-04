@@ -138,11 +138,17 @@ export default function Hero({ ready }: { ready: boolean }) {
 
         {/* CTAs — magnetic */}
         <div ref={ctaRef} className="flex flex-wrap gap-4">
-          <MagneticButton className="bg-white text-[#0A0A0A] px-8 py-4 rounded-full font-label font-bold hover:bg-brand-accent hover:text-white transition-colors duration-300">
+          <MagneticButton
+            onClick={() => document.querySelector("#projects")?.scrollIntoView({ behavior: "smooth" })}
+            className="bg-white text-[#0A0A0A] px-8 py-4 rounded-full font-label font-bold hover:bg-brand-accent hover:text-white transition-colors duration-300"
+          >
             View My Work{" "}
             <span className="material-symbols-outlined text-sm">arrow_outward</span>
           </MagneticButton>
-          <MagneticButton className="border border-white/30 text-white px-8 py-4 rounded-full font-label font-bold hover:bg-white/10 transition-colors duration-300">
+          <MagneticButton
+            onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
+            className="border border-white/30 text-white px-8 py-4 rounded-full font-label font-bold hover:bg-white/10 transition-colors duration-300"
+          >
             Get In Touch
           </MagneticButton>
         </div>

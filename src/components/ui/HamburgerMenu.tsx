@@ -137,13 +137,17 @@ export default function HamburgerMenu() {
         <div ref={linksRef} className="space-y-0">
           {menuLinks.map(({ label, href }) => (
             <div key={label} className="overflow-hidden">
+              {/* inline-block so the link shrinks to text width */}
               <a
                 href={href}
                 onClick={close}
-                className="block font-headline font-extrabold text-white leading-[0.95] tracking-[-0.04em] hover:text-brand-accent transition-colors duration-200"
+                className="relative inline-block group font-headline font-extrabold text-white leading-[0.95] tracking-[-0.04em]"
                 style={{ fontSize: "clamp(44px, 9vw, 110px)" }}
               >
-                {label}
+                {/* Text sits above the bar */}
+                <span className="relative z-10">{label}</span>
+                {/* Thick bar — same height as image reference, slides left→right */}
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-[0.28em] w-full bg-brand-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-[420ms] ease-out" />
               </a>
             </div>
           ))}

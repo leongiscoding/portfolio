@@ -27,8 +27,8 @@ class TouchTexture {
 
   private _stamp(cx: number, cy: number) {
     const s      = this.size;
-    const rShort = s * 0.058;
-    const rLong  = s * 0.082;
+    const rShort = s * 0.028;
+    const rLong  = s * 0.040;
     const rot    = this.angle + Math.PI / 2;
 
     this.ctx.globalCompositeOperation = "source-over";
@@ -61,7 +61,7 @@ class TouchTexture {
       const dy   = cy - this.ly;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist > 0.5) this.angle = Math.atan2(dy, dx);
-      const step = s * 0.018;
+      const step = s * 0.010;
       const n    = Math.max(1, Math.ceil(dist / step));
       for (let i = 0; i < n; i++) {
         this._stamp(this.lx + dx * (i / n), this.ly + dy * (i / n));
@@ -220,6 +220,12 @@ export default function CustomCursor() {
     let needsStamp = false;
 
     const onMove = (e: MouseEvent) => {
+      // Pause paint effect when hovering interactive or text elements
+      const target = e.target as Element;
+      if (target.closest("a, button, input, textarea, select, [role='button'], p, h1, h2, h3, h4, h5, h6, li, label, code")) {
+        needsStamp = false;
+        return;
+      }
       nx = e.clientX / window.innerWidth;
       ny = e.clientY / window.innerHeight;
       needsStamp = true;
