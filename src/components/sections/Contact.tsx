@@ -3,7 +3,11 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 
-const socials = ["Twitter / X", "LinkedIn", "GitHub", "Dribbble"];
+const socials = [
+  { label: "GitHub",   href: "https://github.com/leongiscoding" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/tan-yew-leong-a70aab25b" },
+  { label: "WhatsApp", href: "https://wa.me/60123456789" },
+];
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -133,13 +137,15 @@ export default function Contact() {
           ref={socialsRef}
           className="mt-20 flex flex-wrap justify-center gap-12 font-mono text-[12px] text-white/40 uppercase tracking-widest"
         >
-          {socials.map((s) => (
+          {socials.map(({ label, href }) => (
             <a
-              key={s}
-              href="#"
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-brand-accent transition-colors duration-200 hover:tracking-[0.3em]"
             >
-              {s}
+              {label}
             </a>
           ))}
         </div>

@@ -9,21 +9,21 @@ gsap.registerPlugin(ScrollTrigger);
 const education = [
   {
     index: "01",
-    year: "2016",
-    yearLabel: "GRADUATED",
-    degree: ["MSc Computer", "Science"],
-    school: "National University of Singapore",
+    year: "2025",
+    yearLabel: "GRADUATING",
+    degree: ["Bachelor's in", "Software Engineering"],
+    school: "New Era University College",
     icon: "school",
-    tag: "POSTGRADUATE",
+    tag: "UNDERGRADUATE · DEAN'S LIST · CGPA 3.82",
   },
   {
     index: "02",
-    year: "2014",
+    year: "2023",
     yearLabel: "GRADUATED",
-    degree: ["BFA Digital Art", "& Design"],
-    school: "Pratt Institute, New York",
-    icon: "palette",
-    tag: "UNDERGRADUATE",
+    degree: ["Diploma in", "Computer Science"],
+    school: "New Era University College",
+    icon: "laptop_mac",
+    tag: "DIPLOMA",
   },
 ];
 

@@ -1,16 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 
 export default function About() {
   const sectionRef  = useRef<HTMLElement>(null);
   const badgeRef    = useRef<HTMLDivElement>(null);
   const headingRef  = useRef<HTMLHeadingElement>(null);
   const bodyRef     = useRef<HTMLDivElement>(null);
-  const yearsRef    = useRef<HTMLDivElement>(null);
-  const projRef     = useRef<HTMLDivElement>(null);
-  const counterRef  = useRef<HTMLDivElement>(null);
   const codeRef     = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,36 +22,6 @@ export default function About() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 75%",
-        },
-      });
-
-      // Counters animate up
-      ScrollTrigger.create({
-        trigger: counterRef.current,
-        start: "top 85%",
-        once: true,
-        onEnter: () => {
-          const yearsObj = { val: 0 };
-          gsap.to(yearsObj, {
-            val: 8,
-            duration: 1.8,
-            ease: "power2.out",
-            onUpdate() {
-              if (yearsRef.current)
-                yearsRef.current.textContent = `${Math.round(yearsObj.val)}+`;
-            },
-          });
-
-          const projObj = { val: 0 };
-          gsap.to(projObj, {
-            val: 42,
-            duration: 2,
-            ease: "power2.out",
-            onUpdate() {
-              if (projRef.current)
-                projRef.current.textContent = `${Math.round(projObj.val)}`;
-            },
-          });
         },
       });
 
@@ -140,31 +107,6 @@ export default function About() {
               Currently focused on building scalable SaaS architectures and
               immersive WebGL experiences using the latest industry standards.
             </p>
-          </div>
-
-          <div ref={counterRef} className="flex gap-12 pt-4">
-            <div>
-              <div
-                ref={yearsRef}
-                className="font-headline font-extrabold text-4xl mb-1 tabular-nums"
-              >
-                0+
-              </div>
-              <div className="font-mono text-[11px] uppercase tracking-wider opacity-60">
-                Years Experience
-              </div>
-            </div>
-            <div>
-              <div
-                ref={projRef}
-                className="font-headline font-extrabold text-4xl mb-1 tabular-nums"
-              >
-                0
-              </div>
-              <div className="font-mono text-[11px] uppercase tracking-wider opacity-60">
-                Projects Built
-              </div>
-            </div>
           </div>
         </div>
 

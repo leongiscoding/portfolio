@@ -105,20 +105,28 @@ export default function HamburgerMenu() {
           Get In Touch
         </p>
         <a
-          href="mailto:hello@tyl.dev"
+          href="https://wa.me/60123456789"
+          target="_blank"
+          rel="noopener noreferrer"
           className="font-mono text-sm text-white/70 hover:text-brand-accent transition-colors mb-1"
         >
-          hello@tyl.dev
+          WhatsApp
         </a>
-        <p className="font-mono text-sm text-white/40 mb-8">+60 12-345 6789</p>
+        <p className="font-mono text-sm text-white/40 mb-8">+60 18-363 1583</p>
         <div className="flex gap-5">
-          {["GitHub", "LinkedIn", "Twitter"].map((s) => (
+          {[
+            { label: "GitHub",   href: "https://github.com/leongiscoding" },
+            { label: "LinkedIn", href: "https://www.linkedin.com/in/tan-yew-leong-a70aab25b" },
+            { label: "WhatsApp", href: "https://wa.me/60123456789" },
+          ].map(({ label, href }) => (
             <a
-              key={s}
-              href="#"
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="font-mono text-[10px] uppercase tracking-widest text-white/35 hover:text-brand-accent transition-colors"
             >
-              {s}
+              {label}
             </a>
           ))}
         </div>

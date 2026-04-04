@@ -6,30 +6,21 @@ import { gsap } from "@/lib/gsap";
 const projects = [
   {
     num: "01",
-    title: "Quantum Pay",
-    desc: "Real-time financial tracking dashboard for high-frequency trading firms.",
+    title: "Food Detection System",
+    desc: "Mobile application that identifies food using image classification and machine learning, deployed with TensorFlow Lite for on-device inference.",
     image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuD0qP90zIZnYpmtJG9zJoB7qLn8NNfzGnM929pJYTF22keOFyF49xK6bjeBFIfBTxQuHamwUNykm7fJ1CqTSK0lx6XEWLX9SLiN3HH-7onniF8bbfVjxjnpwQRkVTFQTGbHwoN7PyEWk8oGW3YXgnEnN5vyBEvVPH6WNxMLsMVbQ0SZPN-Gzlhkg7-iQG4QhC3X-b6nkIZQEoXLiGNAgpH1HQYRNLlQXFuWz__-9JMl_1dBV5lVjSaCcY4CU63p1tC9akyV2DHcH1ej",
-    tags: ["Next.js", "PostgreSQL"],
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuA6ELisx82nV7xQYXBXRrIYpAYODuFr1ToR6eV07-XJrETLaodDETohHj91fRWMEcZfaMUwon2rkHJJZItgvfWj80LXsm_qi2YB8RxWOE7kt7q9VtxZDGG8oZPmLJYo2EiTuw0Zz26B037FTgpf6Qar1eoNw-JKohJ8rkyoUwA8W7ay6TlJq0DBgilUb_F9SWRUagBHIfzueeC0vpM21FgtYrcLhGuQqeOyop3BdazLMLoRaHdVWOIyb0Pho0XBe99Doq-714C1taT2",
+    tags: ["Flutter", "TensorFlow Lite", "Firebase"],
     year: "2024",
   },
   {
     num: "02",
-    title: "Neural Mesh",
-    desc: "Procedural 3D visualization of neural network architecture in real-time.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuA6ELisx82nV7xQYXBXRrIYpAYODuFr1ToR6eV07-XJrETLaodDETohHj91fRWMEcZfaMUwon2rkHJJZItgvfWj80LXsm_qi2YB8RxWOE7kt7q9VtxZDGG8oZPmLJYo2EiTuw0Zz26B037FTgpf6Qar1eoNw-JKohJ8rkyoUwA8W7ay6TlJq0DBgilUb_F9SWRUagBHIfzueeC0vpM21FgtYrcLhGuQqeOyop3BdazLMLoRaHdVWOIyb0Pho0XBe99Doq-714C1taT2",
-    tags: ["Three.js", "GLSL"],
-    year: "2023",
-  },
-  {
-    num: "03",
-    title: "Stitch OS",
-    desc: "AI-powered design system that generates production-ready component libraries.",
+    title: "Note Application",
+    desc: "A clean and efficient CRUD mobile application with offline-first local database storage, built with Flutter and Isar for high-performance data handling.",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuD0qP90zIZnYpmtJG9zJoB7qLn8NNfzGnM929pJYTF22keOFyF49xK6bjeBFIfBTxQuHamwUNykm7fJ1CqTSK0lx6XEWLX9SLiN3HH-7onniF8bbfVjxjnpwQRkVTFQTGbHwoN7PyEWk8oGW3YXgnEnN5vyBEvVPH6WNxMLsMVbQ0SZPN-Gzlhkg7-iQG4QhC3X-b6nkIZQEoXLiGNAgpH1HQYRNLlQXFuWz__-9JMl_1dBV5lVjSaCcY4CU63p1tC9akyV2DHcH1ej",
-    tags: ["LLM", "TypeScript"],
-    year: "2022",
+    tags: ["Flutter", "Dart", "Isar DB"],
+    year: "2023",
   },
 ];
 
@@ -64,7 +55,8 @@ export default function Projects() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: () => `+=${getDistance()}`,
+          // one full viewport-height of scroll per card → enough time to read each card
+          end: () => `+=${window.innerHeight * 2}`,
           pin: true,
           scrub: 1,
           anticipatePin: 1,

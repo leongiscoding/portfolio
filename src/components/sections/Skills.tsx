@@ -8,33 +8,33 @@ const skills = [
     index: "01",
     icon: "javascript",
     title: "Frontend",
-    tags: ["React", "Next.js", "TypeScript", "Vue", "Tailwind", "Framer Motion"],
+    tags: ["React", "JavaScript", "HTML", "CSS", "MUI", "Redux", "Axios", "Tailwind"],
   },
   {
     index: "02",
     icon: "dns",
     title: "Backend",
-    tags: ["Node.js", "Express", "Go", "PostgreSQL", "Redis", "GraphQL"],
+    tags: ["PHP", "MySQL", "Firebase", "PostgreSQL", "Node.js", "REST API"],
   },
   {
     index: "03",
-    icon: "cloud_done",
-    title: "DevOps",
-    tags: ["AWS", "Docker", "CI/CD", "Terraform", "Kubernetes", "Linux"],
+    icon: "smartphone",
+    title: "Mobile",
+    tags: ["Flutter", "Dart", "TensorFlow Lite", "Isar DB", "Firebase Auth"],
   },
   {
     index: "04",
     icon: "polyline",
-    title: "Visuals",
-    tags: ["Three.js", "WebGL", "GSAP", "Blender", "Figma", "GLSL"],
+    title: "Tools & Design",
+    tags: ["Figma", "Git", "GitLab", "Postman", "GSAP", "Three.js", "Draw.io"],
   },
 ];
 
 const marqueeItems = [
-  "React", "Next.js", "TypeScript", "Three.js", "GSAP", "WebGL",
-  "Node.js", "PostgreSQL", "Docker", "AWS", "Figma", "Blender",
-  "React", "Next.js", "TypeScript", "Three.js", "GSAP", "WebGL",
-  "Node.js", "PostgreSQL", "Docker", "AWS", "Figma", "Blender",
+  "React", "Flutter", "JavaScript", "Firebase", "Three.js", "GSAP", "Figma",
+  "MySQL", "PostgreSQL", "PHP", "Dart", "TensorFlow", "Git", "Node.js",
+  "React", "Flutter", "JavaScript", "Firebase", "Three.js", "GSAP", "Figma",
+  "MySQL", "PostgreSQL", "PHP", "Dart", "TensorFlow", "Git", "Node.js",
 ];
 
 export default function Skills() {

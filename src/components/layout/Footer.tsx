@@ -1,4 +1,8 @@
-const links = ["GitHub", "LinkedIn", "Twitter"];
+const links = [
+  { label: "GitHub",   href: "https://github.com/leongiscoding" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/tan-yew-leong-a70aab25b" },
+  { label: "WhatsApp", href: "https://wa.me/60123456789" },
+];
 
 export default function Footer() {
   return (
@@ -7,13 +11,15 @@ export default function Footer() {
         © 2024 TYL. PORTFOLIO — BUILT WITH PRECISION
       </div>
       <div className="flex gap-8">
-        {links.map((l) => (
+        {links.map(({ label, href }) => (
           <a
-            key={l}
-            href="#"
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-white/35 hover:text-brand-accent transition-colors font-mono text-[11px] uppercase tracking-[0.22em]"
           >
-            {l}
+            {label}
           </a>
         ))}
       </div>

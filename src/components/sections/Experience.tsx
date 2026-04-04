@@ -5,24 +5,17 @@ import { gsap } from "@/lib/gsap";
 
 const experiences = [
   {
-    period: "2021 — PRESENT",
-    role: "Senior Full Stack Engineer",
-    company: "Innovate Tech Solutions — London, UK",
-    desc: "Leading a team of 8 developers in building a cloud-native financial reporting platform. Reduced overall system latency by 45% through strategic caching and DB optimization.",
+    period: "MAY 2025 — AUG 2025",
+    role: "Frontend Developer Intern",
+    company: "COS Great Trading — Cheras, Selangor",
+    desc: "Designed and developed UI for a household property management system with reusable components and Figma prototypes. Supported 5 concurrent clients with landing pages and CMS maintenance. Assisted in CMS migration integrating CDN libraries including Bootstrap, GSAP, and Three.js.",
     active: true,
   },
   {
-    period: "2018 — 2021",
-    role: "Interactive Developer",
-    company: "Creative Collective — Berlin, DE",
-    desc: "Architected immersive marketing sites for Fortune 500 clients using React and Three.js. Won multiple Awwwards and FWA Site of the Day honors.",
-    active: false,
-  },
-  {
-    period: "2016 — 2018",
-    role: "Junior Web Developer",
-    company: "Startup Hub — Singapore",
-    desc: "Worked closely with the product team to iterate on a mobile-first e-commerce dashboard. Focused on performance and cross-browser compatibility.",
+    period: "JAN 2023 — APR 2023",
+    role: "Admin Intern",
+    company: "MAXCOM MM Sdn Bhd — Cheras, Selangor",
+    desc: "Collaborated with team members on product commercials and worked with the department manager to analyse marketing resource effectiveness. Handled telecommunication submissions, data entry, and customer support via WhatsApp, phone, and email.",
     active: false,
   },
 ];
@@ -87,9 +80,9 @@ export default function Experience() {
     <section
       id="experience"
       ref={sectionRef}
-      className="py-[clamp(72px,10vw,110px)] px-[clamp(24px,6vw,100px)] bg-[#0A0A0A] text-white"
+      className="py-[clamp(72px,10vw,110px)] bg-[#0A0A0A] text-white"
     >
-      <div className="max-w-[720px] mx-auto">
+      <div className="max-w-[720px] mx-auto px-[clamp(24px,6vw,48px)]">
         <div ref={headingRef}>
           <div className="flex items-center gap-3 mb-4">
             <span className="w-10 h-[1px] bg-brand-accent" />
@@ -106,7 +99,7 @@ export default function Experience() {
           {/* Animated timeline line */}
           <div
             ref={lineRef}
-            className="absolute left-0 top-2 bottom-0 w-[1px] bg-gradient-to-b from-brand-accent via-surface-variant to-surface-variant origin-top"
+            className="absolute left-0 top-2 bottom-0 w-[1px] bg-gradient-to-b from-brand-accent via-white/15 to-white/5 origin-top"
           />
 
           <div className="space-y-12">
