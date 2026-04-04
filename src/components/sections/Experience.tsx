@@ -41,33 +41,48 @@ export default function Experience() {
         },
       });
 
-      // Timeline line draw — scrub with scroll
-      gsap.fromTo(
-        lineRef.current,
-        { scaleY: 0, transformOrigin: "top center" },
-        {
-          scaleY: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: entriesRef.current,
-            start: "top 70%",
-            end: "bottom 65%",
-            scrub: 0.6,
-          },
-        }
-      );
+      // Timeline line — slide down from top, then scrub red fill with scroll
+      gsap.from(lineRef.current, {
+        yPercent: -100,
+        opacity: 0,
+        duration: 1.0,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: entriesRef.current,
+          start: "top 75%",
+        },
+      });
 
-      // Each entry fades + slides in
+      // Red fill scrubs as user scrolls through entries
+      const redLine = lineRef.current;
+      if (redLine) {
+        gsap.fromTo(
+          redLine,
+          { scaleY: 0, transformOrigin: "top center" },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: entriesRef.current,
+              start: "top 60%",
+              end: "bottom 65%",
+              scrub: 0.6,
+            },
+          }
+        );
+      }
+
+      // Each entry fades + slides down from top
       const entries = entriesRef.current?.querySelectorAll(".exp-entry");
-      entries?.forEach((entry, i) => {
+      entries?.forEach((entry) => {
         gsap.from(entry, {
           opacity: 0,
-          x: -40,
+          y: -40,
           duration: 0.9,
           ease: "power3.out",
           scrollTrigger: {
             trigger: entry,
-            start: "top 82%",
+            start: "top 85%",
           },
         });
       });
@@ -96,10 +111,12 @@ export default function Experience() {
         </div>
 
         <div className="relative pl-8" ref={entriesRef}>
-          {/* Animated timeline line */}
+          {/* Static grey track (always full height) */}
+          <div className="absolute left-0 top-2 bottom-0 w-[1px] bg-gradient-to-b from-white/15 to-white/5" />
+          {/* Red progress line — grows with scroll */}
           <div
             ref={lineRef}
-            className="absolute left-0 top-2 bottom-0 w-[1px] bg-gradient-to-b from-brand-accent via-white/15 to-white/5 origin-top"
+            className="absolute left-0 top-2 bottom-0 w-[1px] bg-brand-accent origin-top"
           />
 
           <div className="space-y-12">
@@ -107,7 +124,7 @@ export default function Experience() {
               <div key={role} className="relative group exp-entry">
                 {/* Dot */}
                 <div
-                  className={`absolute -left-[37px] top-1.5 w-4 h-4 bg-[#0A0A0A] border-2 rounded-full z-10 transition-all duration-300 ${
+                  className={`absolute -left-10 top-1.5 w-4 h-4 bg-[#0A0A0A] border-2 rounded-full z-10 transition-all duration-300 ${
                     active
                       ? "border-brand-accent shadow-[0_0_12px_rgba(255,44,44,0.4)]"
                       : "border-white/20 group-hover:border-brand-accent"
@@ -115,7 +132,7 @@ export default function Experience() {
                 />
                 {/* Ripple on active */}
                 {active && (
-                  <div className="absolute -left-[45px] -top-[4px] w-8 h-8 border border-brand-accent/30 rounded-full animate-ping" />
+                  <div className="absolute -left-12 -top-[2px] w-8 h-8 border border-brand-accent/30 rounded-full animate-ping" />
                 )}
 
                 <span

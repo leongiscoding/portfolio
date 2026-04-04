@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+
+// useLayoutEffect fires synchronously before the browser paints — prevents
+// content flashing at natural position when the preloader curtain opens.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import { gsap } from "@/lib/gsap";
 import HamburgerMenu from "@/components/ui/HamburgerMenu";
 
@@ -12,12 +17,14 @@ export default function Navbar({ ready }: { ready: boolean }) {
   const linksRef = useRef<HTMLDivElement>(null);
   const btnRef   = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
+    // Always set nav off-screen before any paint so the curtain never
+    // exposes it at its natural (visible) position.
+    gsap.set(navRef.current, { y: -72, opacity: 0 });
+
     if (!ready) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(navRef.current, { y: -72, opacity: 0 });
-
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.to(navRef.current,  { y: 0, opacity: 1, duration: 0.65 })
         .from(logoRef.current,  { opacity: 0, x: -12, duration: 0.45 }, "-=0.3")

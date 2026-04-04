@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const projects = [
   {
@@ -26,61 +26,57 @@ const projects = [
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef   = useRef<HTMLDivElement>(null);
   const headRef    = useRef<HTMLDivElement>(null);
+  const cardsRef   = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const ctx = gsap.context(() => {
-      // Header reveal before pin
+      const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+
+      // All cards start off-screen to the right, invisible
+      gsap.set(cards, { xPercent: 110, opacity: 0 });
+
+      // Header reveal
       gsap.from(headRef.current!.children, {
         opacity: 0,
-        y: 40,
+        y: 30,
         stagger: 0.1,
         duration: 0.9,
         ease: "power3.out",
         scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
       });
 
-      // Horizontal scroll
-      const track   = trackRef.current!;
-      const section = sectionRef.current!;
+      // Master timeline — cards enter/exit one by one
+      const tl = gsap.timeline();
 
-      const getDistance = () => track.scrollWidth - section.clientWidth;
-
-      gsap.to(track, {
-        x: () => -getDistance(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          // one full viewport-height of scroll per card → enough time to read each card
-          end: () => `+=${window.innerHeight * 2}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
+      cards.forEach((card, i) => {
+        if (i === 0) {
+          // First card: slide in from right
+          tl.to(card, { xPercent: 0, opacity: 1, duration: 1, ease: "power2.out" });
+          // Hold so user can read
+          tl.to({}, { duration: 0.8 });
+        } else {
+          // Slide previous card out (subtle push-left + fade)
+          // Simultaneously slide current card in from right
+          tl.to(cards[i - 1], { xPercent: -12, opacity: 0, duration: 1, ease: "power2.in" });
+          tl.to(card,          { xPercent:   0, opacity: 1, duration: 1, ease: "power2.out" }, "<");
+          // Hold on last card
+          tl.to({}, { duration: 0.8 });
+        }
       });
 
-      // Individual card parallax on images
-      track.querySelectorAll<HTMLElement>(".proj-img").forEach((img) => {
-        gsap.fromTo(
-          img,
-          { scale: 1.15 },
-          {
-            scale: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: img.closest(".proj-card")!,
-              containerAnimation: gsap.getById("horiz-tween") ?? undefined,
-              start: "left right",
-              end: "right left",
-              scrub: true,
-            },
-          }
-        );
+      // Pin section and scrub the master timeline
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: () => `+=${window.innerHeight * cards.length * 2}`,
+        pin: true,
+        scrub: 1.2,
+        animation: tl,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
       });
     });
 
@@ -96,7 +92,7 @@ export default function Projects() {
       {/* Header */}
       <div
         ref={headRef}
-        className="shrink-0 px-[clamp(24px,6vw,100px)] pt-[clamp(40px,5vw,64px)] pb-6"
+        className="shrink-0 px-[clamp(24px,6vw,100px)] pt-[clamp(40px,5vw,64px)] pb-6 relative z-10"
       >
         <div className="flex items-center gap-3 mb-3">
           <span className="w-10 h-[1px] bg-brand-accent" />
@@ -114,17 +110,14 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* Horizontal track */}
-      <div
-        ref={trackRef}
-        className="flex items-end gap-6 pl-[clamp(24px,6vw,100px)] pb-[clamp(24px,4vw,48px)]"
-        style={{ flex: 1 }}
-      >
-        {projects.map(({ num, title, desc, image, tags, year }) => (
+      {/* Stacked cards — each absolutely fills the content area */}
+      <div className="relative flex-1 overflow-hidden">
+        {projects.map(({ num, title, desc, image, tags, year }, i) => (
           <div
             key={num}
-            className="proj-card flex-shrink-0 relative rounded-[20px] overflow-hidden border border-white/8 group cursor-pointer"
-            style={{ width: "min(780px, 72vw)", height: "100%" }}
+            ref={(el) => { cardsRef.current[i] = el; }}
+            className="proj-card absolute inset-x-[clamp(24px,6vw,100px)] top-0 bottom-[clamp(24px,4vw,48px)] rounded-[20px] overflow-hidden border border-white/8 group cursor-pointer"
+            style={{ zIndex: i + 1 }}
           >
             {/* Big number watermark */}
             <div className="absolute inset-0 flex items-center justify-end pr-6 pointer-events-none z-[1] overflow-hidden">
@@ -166,7 +159,8 @@ export default function Projects() {
 
               <div className="flex justify-between items-end gap-4">
                 <div>
-                  <h3 className="font-headline font-bold leading-none tracking-tight mb-3 group-hover:text-brand-accent transition-colors duration-400"
+                  <h3
+                    className="font-headline font-bold leading-none tracking-tight mb-3 group-hover:text-brand-accent transition-colors duration-400"
                     style={{ fontSize: "clamp(28px,4vw,52px)" }}
                   >
                     {title}
@@ -183,9 +177,6 @@ export default function Projects() {
             </div>
           </div>
         ))}
-
-        {/* End spacer */}
-        <div className="flex-shrink-0 w-[clamp(24px,6vw,100px)]" />
       </div>
     </section>
   );
