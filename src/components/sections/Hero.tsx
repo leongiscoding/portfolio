@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import dynamic from "next/dynamic";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -15,24 +18,25 @@ export default function Hero({ ready }: { ready: boolean }) {
   const badgeRef   = useRef<HTMLDivElement>(null);
   const metaRef    = useRef<HTMLDivElement>(null);
   const ctaRef     = useRef<HTMLDivElement>(null);
-  const scrollRef  = useRef<HTMLDivElement>(null);
 
   const l1 = useRef<(HTMLSpanElement | null)[]>(Array(LINE1.length).fill(null));
   const l2 = useRef<(HTMLSpanElement | null)[]>(Array(LINE2.length).fill(null));
 
-  useEffect(() => {
-    if (!ready) return;
-
+  useIsomorphicLayoutEffect(() => {
     const allChars = [...l1.current, ...l2.current].filter(Boolean) as HTMLSpanElement[];
 
-    const ctx = gsap.context(() => {
-      // Initial hidden state
-      gsap.set(allChars, { y: "115%", rotate: 4, opacity: 0 });
-      gsap.set([badgeRef.current, metaRef.current, ctaRef.current, scrollRef.current], {
-        opacity: 0,
-        y: 28,
-      });
+    // Always hide hero elements before any paint — this runs synchronously
+    // before the browser renders, so the curtain never reveals them at their
+    // natural (fully-visible) position.
+    gsap.set(allChars, { y: "115%", rotate: 4, opacity: 0 });
+    gsap.set([badgeRef.current, metaRef.current, ctaRef.current], {
+      opacity: 0,
+      y: 28,
+    });
 
+    if (!ready) return;
+
+    const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
       tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.7 })
@@ -44,8 +48,7 @@ export default function Hero({ ready }: { ready: boolean }) {
           duration: 1.05,
         }, "-=0.35")
         .to(metaRef.current,  { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
-        .to(ctaRef.current,   { opacity: 1, y: 0, duration: 0.7 }, "-=0.6")
-        .to(scrollRef.current,{ opacity: 1, y: 0, duration: 0.5 }, "-=0.4");
+        .to(ctaRef.current,   { opacity: 1, y: 0, duration: 0.7 }, "-=0.6");
 
       // Scroll parallax
       gsap.to(sectionRef.current, {
@@ -154,21 +157,6 @@ export default function Hero({ ready }: { ready: boolean }) {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div
-        ref={scrollRef}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-      >
-        <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-on-surface-variant opacity-40">
-          Scroll
-        </span>
-        <div className="w-[1px] h-16 bg-surface-variant relative overflow-hidden rounded-full">
-          <div
-            className="absolute top-0 left-0 w-full bg-brand-accent rounded-full"
-            style={{ height: "40%", animation: "scrollbar 2s ease-in-out infinite" }}
-          />
-        </div>
-      </div>
     </header>
   );
 }

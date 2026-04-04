@@ -21,18 +21,22 @@ export default function Home() {
     <>
       <Preloader onComplete={() => setReady(true)} />
       <CustomCursor />
-      <Navbar ready={ready} />
-      <main>
-        <Hero ready={ready} />
-        <About />
-        <Skills />
-        <Experience />
-        <Projects />
-        <Education />
-        <Contact />
-      </main>
-      <Footer />
-      <FloatingActions />
+      {/* visibility:hidden keeps layout intact but hides everything until ready.
+          Acts as a hard safety net so the curtain never reveals content mid-animation. */}
+      <div style={{ visibility: ready ? "visible" : "hidden" }}>
+        <Navbar ready={ready} />
+        <main>
+          <Hero ready={ready} />
+          <About />
+          <Skills />
+          <Experience />
+          <Projects />
+          <Education />
+          <Contact />
+        </main>
+        <Footer />
+        <FloatingActions />
+      </div>
     </>
   );
 }

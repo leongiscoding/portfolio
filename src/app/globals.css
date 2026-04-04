@@ -136,12 +136,6 @@ input, textarea {
   user-select: text;
 }
 
-/* Scroll indicator animation */
-@keyframes scrollbar {
-  0%   { top: 0%;   opacity: 1; }
-  60%  { top: 60%;  opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
 
 /* ── Film grain overlay ──────────────────────────────── */
 body::after {
