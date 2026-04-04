@@ -1,0 +1,147 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
+
+const experiences = [
+  {
+    period: "2021 — PRESENT",
+    role: "Senior Full Stack Engineer",
+    company: "Innovate Tech Solutions — London, UK",
+    desc: "Leading a team of 8 developers in building a cloud-native financial reporting platform. Reduced overall system latency by 45% through strategic caching and DB optimization.",
+    active: true,
+  },
+  {
+    period: "2018 — 2021",
+    role: "Interactive Developer",
+    company: "Creative Collective — Berlin, DE",
+    desc: "Architected immersive marketing sites for Fortune 500 clients using React and Three.js. Won multiple Awwwards and FWA Site of the Day honors.",
+    active: false,
+  },
+  {
+    period: "2016 — 2018",
+    role: "Junior Web Developer",
+    company: "Startup Hub — Singapore",
+    desc: "Worked closely with the product team to iterate on a mobile-first e-commerce dashboard. Focused on performance and cross-browser compatibility.",
+    active: false,
+  },
+];
+
+export default function Experience() {
+  const sectionRef  = useRef<HTMLElement>(null);
+  const headingRef  = useRef<HTMLDivElement>(null);
+  const lineRef     = useRef<HTMLDivElement>(null);
+  const entriesRef  = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Heading
+      gsap.from(headingRef.current!.children, {
+        opacity: 0,
+        y: 40,
+        stagger: 0.1,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 78%",
+        },
+      });
+
+      // Timeline line draw — scrub with scroll
+      gsap.fromTo(
+        lineRef.current,
+        { scaleY: 0, transformOrigin: "top center" },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: entriesRef.current,
+            start: "top 70%",
+            end: "bottom 65%",
+            scrub: 0.6,
+          },
+        }
+      );
+
+      // Each entry fades + slides in
+      const entries = entriesRef.current?.querySelectorAll(".exp-entry");
+      entries?.forEach((entry, i) => {
+        gsap.from(entry, {
+          opacity: 0,
+          x: -40,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: entry,
+            start: "top 82%",
+          },
+        });
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section
+      id="experience"
+      ref={sectionRef}
+      className="py-[clamp(72px,10vw,110px)] px-[clamp(24px,6vw,100px)] bg-[#0A0A0A] text-white"
+    >
+      <div className="max-w-[720px] mx-auto">
+        <div ref={headingRef}>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-10 h-[1px] bg-brand-accent" />
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-brand-accent">
+              Career Logs
+            </span>
+          </div>
+          <h2 className="font-headline font-extrabold text-[clamp(32px,5vw,52px)] leading-tight tracking-[-0.04em] mb-16">
+            The Professional Arc.
+          </h2>
+        </div>
+
+        <div className="relative pl-8" ref={entriesRef}>
+          {/* Animated timeline line */}
+          <div
+            ref={lineRef}
+            className="absolute left-0 top-2 bottom-0 w-[1px] bg-gradient-to-b from-brand-accent via-surface-variant to-surface-variant origin-top"
+          />
+
+          <div className="space-y-12">
+            {experiences.map(({ period, role, company, desc, active }) => (
+              <div key={role} className="relative group exp-entry">
+                {/* Dot */}
+                <div
+                  className={`absolute -left-[37px] top-1.5 w-4 h-4 bg-[#0A0A0A] border-2 rounded-full z-10 transition-all duration-300 ${
+                    active
+                      ? "border-brand-accent shadow-[0_0_12px_rgba(255,44,44,0.4)]"
+                      : "border-white/20 group-hover:border-brand-accent"
+                  }`}
+                />
+                {/* Ripple on active */}
+                {active && (
+                  <div className="absolute -left-[45px] -top-[4px] w-8 h-8 border border-brand-accent/30 rounded-full animate-ping" />
+                )}
+
+                <span
+                  className={`font-mono text-[12px] font-bold mb-2 block tracking-widest transition-colors duration-200 ${
+                    active
+                      ? "text-brand-accent"
+                      : "text-on-surface-variant/40 group-hover:text-brand-accent"
+                  }`}
+                >
+                  {period}
+                </span>
+                <h3 className="font-headline font-bold text-2xl mb-1">{role}</h3>
+                <p className="text-on-surface-variant/80 font-medium mb-4">{company}</p>
+                <p className="text-on-surface-variant leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

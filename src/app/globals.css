@@ -1,26 +1,180 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Brand */
+  --color-brand-accent: #FF2C2C;
+
+  /* Surface & Background */
+  --color-background: #0a0a0a;
+  --color-surface: #0a0a0a;
+  --color-surface-bright: #141414;
+  --color-surface-dim: #060606;
+  --color-surface-variant: #1e1e1e;
+  --color-surface-container: #111111;
+  --color-surface-container-low: #0d0d0d;
+  --color-surface-container-high: #1a1a1a;
+  --color-surface-container-highest: #222222;
+  --color-surface-container-lowest: #080808;
+  --color-surface-tint: #ff2c2c;
+  --color-inverse-surface: #e8e8e8;
+  --color-inverse-on-surface: #1a1a1a;
+
+  /* On-surface */
+  --color-on-surface: #f0f0f0;
+  --color-on-surface-variant: #a0a0a0;
+  --color-on-background: #f0f0f0;
+
+  /* Primary */
+  --color-primary: #bb0011;
+  --color-primary-fixed: #ffdad6;
+  --color-primary-fixed-dim: #ffb4ab;
+  --color-primary-container: #e7141e;
+  --color-on-primary: #ffffff;
+  --color-on-primary-fixed: #410002;
+  --color-on-primary-fixed-variant: #93000b;
+  --color-on-primary-container: #fffbff;
+  --color-inverse-primary: #ffb4ab;
+
+  /* Secondary */
+  --color-secondary: #6b5a5b;
+  --color-secondary-fixed: #f4dddd;
+  --color-secondary-fixed-dim: #d7c2c2;
+  --color-secondary-container: #f4dddd;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-fixed: #241919;
+  --color-on-secondary-fixed-variant: #524343;
+  --color-on-secondary-container: #716061;
+
+  /* Tertiary */
+  --color-tertiary: #5d5c5b;
+  --color-tertiary-fixed: #e5e2e1;
+  --color-tertiary-fixed-dim: #c9c6c5;
+  --color-tertiary-container: #767474;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-fixed: #1c1b1b;
+  --color-on-tertiary-fixed-variant: #474646;
+  --color-on-tertiary-container: #f7feff;
+
+  /* Error */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  /* Outline */
+  --color-outline: #936e6a;
+  --color-outline-variant: #e8bcb7;
+
+  /* Border Radius */
+  --radius: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+
+  /* Font Families */
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: Inter, sans-serif;
+  --font-label: Inter, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Custom utility classes */
+.grid-overlay {
+  background-image: radial-gradient(circle, rgba(10, 10, 10, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.scan-lines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.01) 0px,
+    rgba(255, 255, 255, 0.01) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.vignette {
+  background: radial-gradient(circle, transparent 0%, rgba(8, 8, 8, 0.4) 100%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.text-glow:hover {
+  text-shadow: 0 0 15px rgba(255, 44, 44, 0.5);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide default cursor — CustomCursor takes over on desktop */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Scroll indicator animation */
+@keyframes scrollbar {
+  0%   { top: 0%;   opacity: 1; }
+  60%  { top: 60%;  opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── Film grain overlay ──────────────────────────────── */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  animation: grain 0.4s steps(1) infinite;
+}
+
+@keyframes grain {
+  0%  { background-position:   0px   0px; }
+  10% { background-position: -40px -60px; }
+  20% { background-position:  50px  20px; }
+  30% { background-position: -20px  80px; }
+  40% { background-position:  70px -30px; }
+  50% { background-position: -60px  50px; }
+  60% { background-position:  30px  70px; }
+  70% { background-position: -80px -10px; }
+  80% { background-position:  10px -80px; }
+  90% { background-position:  60px  40px; }
+ 100% { background-position:   0px   0px; }
+}
+
+/* ── Horizontal scroll section scrollbar hide ────────── */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Typewriter cursor blink ─────────────────────────── */
+.tw-cursor {
+  animation: tw-blink 0.8s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes tw-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
