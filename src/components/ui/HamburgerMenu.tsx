@@ -134,7 +134,7 @@ export default function HamburgerMenu() {
 
       {/* Right: nav links */}
       <div className="flex-1 flex flex-col justify-center px-[clamp(32px,8vw,120px)]">
-        <div ref={linksRef} className="space-y-0">
+        <div ref={linksRef} className="space-y-3">
           {menuLinks.map(({ label, href }) => (
             <div key={label}>
               <a
@@ -151,16 +151,22 @@ export default function HamburgerMenu() {
 
                   // Build a staggered timeline that repeats — chars stay permanently
                   // phase-offset so the wave ripples continuously while hovering
-                  const tl = gsap.timeline({ repeat: -1 });
                   chars.forEach((char, i) => {
-                    tl.fromTo(
+                    gsap.fromTo(
                       char,
-                      { y: 0 },
-                      { y: -16, duration: 0.36, ease: "sine.inOut", yoyo: true, repeat: 1 },
-                      i * 0.07   // offset each char within the timeline
+                      { y: 0, color: "#ffffff" },
+                      {
+                        y: -22,
+                        color: "#FF2C2C",
+                        duration: 0.9,
+                        ease: "sine.in",
+                        yoyo: true,
+                        yoyoEase: "power3.out",
+                        repeat: -1,
+                        delay: i * 0.1,
+                      }
                     );
                   });
-                  (el as any)._waveTl = tl;
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget;
@@ -168,7 +174,7 @@ export default function HamburgerMenu() {
                   (el as any)._waveTl?.kill();
                   delete (el as any)._waveTl;
                   gsap.killTweensOf(chars);
-                  gsap.to(chars, { y: 0, duration: 0.45, ease: "power3.out", stagger: 0.025 });
+                  gsap.to(chars, { y: 0, color: "#ffffff", duration: 0.45, ease: "power3.out", stagger: 0.025 });
                 }}
               >
                 {/* Per-character spans for wave animation */}

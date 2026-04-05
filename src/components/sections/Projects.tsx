@@ -144,32 +144,32 @@ export default function Projects() {
             <div className="absolute inset-0 bg-brand-accent/0 group-hover:bg-brand-accent/6 transition-all duration-700 z-[3]" />
 
             {/* Content */}
-            <div className="absolute inset-x-0 bottom-0 p-10 z-[4]">
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-10 z-[4]">
               {/* Tags */}
-              <div className="flex gap-2 mb-5">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-mono border border-white/10 uppercase tracking-widest"
+                    className="px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[10px] font-mono border border-white/10 uppercase tracking-widest whitespace-nowrap"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
 
-              <div className="flex justify-between items-end gap-4">
-                <div>
+              <div className="flex justify-between items-end gap-3">
+                <div className="min-w-0">
                   <h3
-                    className="font-headline font-bold leading-none tracking-tight mb-3 group-hover:text-brand-accent transition-colors duration-400"
-                    style={{ fontSize: "clamp(28px,4vw,52px)" }}
+                    className="font-headline font-bold leading-tight tracking-tight mb-2 group-hover:text-brand-accent transition-colors duration-400"
+                    style={{ fontSize: "clamp(22px,4vw,52px)" }}
                   >
                     {title}
                   </h3>
-                  <p className="text-white/45 text-base max-w-sm leading-relaxed">{desc}</p>
+                  <p className="text-white/45 text-sm md:text-base max-w-sm leading-relaxed line-clamp-3">{desc}</p>
                 </div>
                 <div className="flex flex-col items-end gap-3 shrink-0">
                   <span className="font-mono text-white/25 text-xs">{year}</span>
-                  <div className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-accent group-hover:border-brand-accent group-hover:rotate-45 transition-all duration-400">
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-accent group-hover:border-brand-accent group-hover:rotate-45 transition-all duration-400">
                     <span className="material-symbols-outlined text-sm">north_east</span>
                   </div>
                 </div>
