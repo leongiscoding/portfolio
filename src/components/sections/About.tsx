@@ -55,7 +55,7 @@ export default function About() {
             lines.forEach((el, index) => {
               const chars = Math.max(el.textContent?.length ?? 8, 1);
               // 40–75 ms per character — varies per line for a human feel
-              const msPerChar = 40 + Math.random() * 35;
+              const msPerChar = 90 + Math.random() * 50;
               const dur = Math.max((chars * msPerChar) / 1000, 0.12);
               const cursor = cursors[index];
 
@@ -94,7 +94,7 @@ export default function About() {
               }
 
               // Inter-line pause: 80–260 ms (simulates thinking before next line)
-              cumDelay += dur + 0.08 + Math.random() * 0.18;
+              cumDelay += dur + 0.15 + Math.random() * 0.25;
             });
           },
         });
