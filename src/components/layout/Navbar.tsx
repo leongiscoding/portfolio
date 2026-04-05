@@ -35,6 +35,40 @@ export default function Navbar({ ready }: { ready: boolean }) {
     return () => ctx.revert();
   }, [ready]);
 
+  /* ── Hide on scroll-down, reveal on scroll-up ───── */
+  useEffect(() => {
+    if (!ready) return;
+
+    let lastY    = window.scrollY;
+    let isHidden = false;
+
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      const delta    = currentY - lastY;
+
+      if (currentY < 80) {
+        // Always visible near the top
+        if (isHidden) {
+          gsap.to(navRef.current, { y: 0, duration: 0.38, ease: "power2.out" });
+          isHidden = false;
+        }
+      } else if (delta > 5 && !isHidden) {
+        // Scrolling down — slide out
+        gsap.to(navRef.current, { y: -72, duration: 0.32, ease: "power2.in" });
+        isHidden = true;
+      } else if (delta < -5 && isHidden) {
+        // Scrolling up — slide back in
+        gsap.to(navRef.current, { y: 0, duration: 0.38, ease: "power2.out" });
+        isHidden = false;
+      }
+
+      lastY = currentY;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [ready]);
+
   return (
     <nav
       ref={navRef}
