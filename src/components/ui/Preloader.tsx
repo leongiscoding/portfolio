@@ -83,7 +83,7 @@ export default function Preloader({
           <div
             ref={counterRef}
             className="font-headline font-extrabold leading-none tabular-nums text-white"
-            style={{ fontSize: "clamp(80px,14vw,160px)" }}
+            style={{ fontSize: "clamp(56px,14vw,160px)" }}
           >
             000
           </div>
