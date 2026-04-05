@@ -92,7 +92,7 @@ export default function Projects() {
       {/* Header */}
       <div
         ref={headRef}
-        className="shrink-0 px-[clamp(24px,6vw,100px)] pt-[clamp(40px,5vw,64px)] pb-6 relative z-10"
+        className="shrink-0 px-[clamp(24px,6vw,100px)] pt-[clamp(20px,2.5vw,36px)] pb-4 relative z-10"
       >
         <div className="flex items-center gap-3 mb-3">
           <span className="w-10 h-[1px] bg-brand-accent" />
