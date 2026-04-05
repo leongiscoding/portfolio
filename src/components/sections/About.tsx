@@ -39,10 +39,12 @@ export default function About() {
 
       // Typewriter: each line types at ~55 ms/char with random inter-line pauses
       const codeEls = codeRef.current?.querySelectorAll<HTMLElement>(".code-line code");
+      const cursorEls = codeRef.current?.querySelectorAll<HTMLElement>(".code-line .tw-cursor");
       if (codeEls && codeEls.length) {
         gsap.set(codeEls, { clipPath: "inset(0 100% 0 0)" });
 
         const lines = Array.from(codeEls);
+        const cursors = cursorEls ? Array.from(cursorEls) : [];
         let cumDelay = 0;
 
         ScrollTrigger.create({
@@ -50,11 +52,26 @@ export default function About() {
           start: "top 75%",
           once: true,
           onEnter: () => {
-            lines.forEach((el) => {
+            lines.forEach((el, index) => {
               const chars = Math.max(el.textContent?.length ?? 8, 1);
               // 40–75 ms per character — varies per line for a human feel
               const msPerChar = 40 + Math.random() * 35;
               const dur = Math.max((chars * msPerChar) / 1000, 0.12);
+              const cursor = cursors[index];
+
+              if (cursor) {
+                // Anchor cursor at the left edge of this code element
+                gsap.set(cursor, { left: el.offsetLeft });
+                // Show cursor when line starts typing
+                gsap.to(cursor, { opacity: 1, duration: 0, delay: cumDelay });
+                // Move cursor right in lock-step with the clipPath reveal
+                gsap.to(cursor, {
+                  left: el.offsetLeft + el.offsetWidth,
+                  duration: dur,
+                  ease: `steps(${chars})`,
+                  delay: cumDelay,
+                });
+              }
 
               gsap.to(el, {
                 clipPath: "inset(0 0% 0 0)",
@@ -64,15 +81,21 @@ export default function About() {
                 delay: cumDelay,
               });
 
+              if (cursor) {
+                if (index < lines.length - 1) {
+                  // Hide when line finishes; next line's cursor takes over
+                  gsap.to(cursor, { opacity: 0, duration: 0, delay: cumDelay + dur });
+                } else {
+                  // Last line: blink at the final position once typing finishes
+                  gsap.delayedCall(cumDelay + dur, () => {
+                    cursor.classList.add("tw-cursor--blink");
+                  });
+                }
+              }
+
               // Inter-line pause: 80–260 ms (simulates thinking before next line)
               cumDelay += dur + 0.08 + Math.random() * 0.18;
             });
-
-            // Cursor appears once the last line finishes typing
-            const cursor = codeRef.current?.querySelector<HTMLElement>(".tw-cursor");
-            if (cursor) {
-              gsap.to(cursor, { opacity: 1, duration: 0, delay: cumDelay });
-            }
           },
         });
       }
@@ -146,14 +169,14 @@ export default function About() {
 
           <div className="p-8 font-mono text-[13px] leading-relaxed">
             {codeLines.map((line, i) => (
-              <div key={i} className="code-line flex gap-4">
-                <span className="text-white/20 select-none w-5 shrink-0">
+              <div key={i} className="code-line relative flex gap-1 items-center">
+                <span className="text-white/20 select-none w-9 shrink-0">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <code className="text-white block overflow-hidden w-full">{line}</code>
+                <code className="text-white inline-block overflow-hidden">{line}</code>
+                <span className="tw-cursor absolute top-1/2 -translate-y-1/2 w-[2px] h-[1em] bg-brand-accent opacity-0" />
               </div>
             ))}
-            <span className="tw-cursor inline-block w-[2px] h-[1em] bg-brand-accent ml-9 mt-1 opacity-0" />
           </div>
         </div>
       </div>

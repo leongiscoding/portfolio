@@ -212,8 +212,11 @@ body::after {
 
 /* ── Typewriter cursor blink ─────────────────────────── */
 .tw-cursor {
-  animation: tw-blink 0.8s step-end infinite;
   vertical-align: middle;
+}
+/* Added once all lines finish typing */
+.tw-cursor--blink {
+  animation: tw-blink 0.8s step-end infinite;
 }
 @keyframes tw-blink {
   0%, 100% { opacity: 1; }
