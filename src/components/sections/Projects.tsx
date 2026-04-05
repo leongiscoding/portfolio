@@ -116,7 +116,7 @@ export default function Projects() {
           <div
             key={num}
             ref={(el) => { cardsRef.current[i] = el; }}
-            className="proj-card absolute inset-x-[clamp(24px,6vw,100px)] top-0 bottom-[clamp(24px,4vw,48px)] rounded-[20px] overflow-hidden border border-white/8 group cursor-pointer"
+            className="proj-card absolute inset-x-[clamp(24px,6vw,100px)] top-[clamp(12px,2vw,24px)] bottom-[clamp(40px,5.5vw,72px)] rounded-[20px] overflow-hidden border border-white/8 group cursor-pointer"
             style={{ zIndex: i + 1 }}
           >
             {/* Big number watermark */}
