@@ -136,18 +136,47 @@ export default function HamburgerMenu() {
       <div className="flex-1 flex flex-col justify-center px-[clamp(32px,8vw,120px)]">
         <div ref={linksRef} className="space-y-0">
           {menuLinks.map(({ label, href }) => (
-            <div key={label} className="overflow-hidden">
-              {/* inline-block so the link shrinks to text width */}
+            <div key={label}>
               <a
                 href={href}
                 onClick={close}
-                className="relative inline-block group font-headline font-extrabold text-white leading-[0.95] tracking-[-0.04em]"
+                className="relative inline-block font-headline font-extrabold text-white leading-[0.95] tracking-[-0.04em] whitespace-nowrap"
                 style={{ fontSize: "clamp(44px, 9vw, 110px)" }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget;
+                  const chars = Array.from(el.querySelectorAll<HTMLElement>(".char"));
+                  // Kill any existing wave on this link
+                  (el as any)._waveTl?.kill();
+                  gsap.killTweensOf(chars);
+
+                  // Build a staggered timeline that repeats — chars stay permanently
+                  // phase-offset so the wave ripples continuously while hovering
+                  const tl = gsap.timeline({ repeat: -1 });
+                  chars.forEach((char, i) => {
+                    tl.fromTo(
+                      char,
+                      { y: 0 },
+                      { y: -16, duration: 0.36, ease: "sine.inOut", yoyo: true, repeat: 1 },
+                      i * 0.07   // offset each char within the timeline
+                    );
+                  });
+                  (el as any)._waveTl = tl;
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget;
+                  const chars = el.querySelectorAll<HTMLElement>(".char");
+                  (el as any)._waveTl?.kill();
+                  delete (el as any)._waveTl;
+                  gsap.killTweensOf(chars);
+                  gsap.to(chars, { y: 0, duration: 0.45, ease: "power3.out", stagger: 0.025 });
+                }}
               >
-                {/* Text sits above the bar */}
-                <span className="relative z-10">{label}</span>
-                {/* Thick bar — same height as image reference, slides left→right */}
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-[0.28em] w-full bg-brand-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-[420ms] ease-out" />
+                {/* Per-character spans for wave animation */}
+                <span className="relative z-10 inline-flex flex-nowrap">
+                  {label.split("").map((char, i) => (
+                    <span key={i} className="char inline-block">{char}</span>
+                  ))}
+                </span>
               </a>
             </div>
           ))}
