@@ -68,48 +68,39 @@ export default function Preloader({
 
   return (
     <div ref={wrapRef} className="fixed inset-0 z-[9999]" style={{ pointerEvents: "none" }}>
-      {/* Top half */}
-      <div
-        ref={topRef}
-        className="absolute top-0 left-0 right-0 h-[50vh] bg-[#080808] flex flex-col items-center justify-end"
-      >
-        <div className="flex flex-col items-center pb-6 w-full px-8 gap-3">
-          <div
-            ref={logoRef}
-            className="font-mono font-bold text-white tracking-[0.35em] text-2xl"
-          >
-            TYL.
-          </div>
-          <div
-            ref={counterRef}
-            className="font-headline font-extrabold leading-none tabular-nums text-white"
-            style={{ fontSize: "clamp(56px,14vw,160px)" }}
-          >
-            000
-          </div>
-        </div>
-      </div>
+      {/* Curtain panels — purely for the split-exit animation */}
+      <div ref={topRef} className="absolute top-0 left-0 right-0 h-1/2 bg-[#080808]" />
+      <div ref={botRef} className="absolute bottom-0 left-0 right-0 h-1/2 bg-[#080808]" />
 
-      {/* Bottom half */}
-      <div
-        ref={botRef}
-        className="absolute bottom-0 left-0 right-0 h-[50vh] bg-[#080808] flex flex-col items-center justify-start"
-      >
-        <div className="flex flex-col items-center pt-6 w-full px-8 gap-4">
-          {/* Loading bar */}
-          <div className="w-full max-w-[320px] h-[1px] bg-white/10 relative overflow-hidden">
-            <div
-              ref={barFillRef}
-              className="absolute top-0 left-0 h-full bg-brand-accent"
-              style={{ width: "0%", transition: "none" }}
-            />
-          </div>
+      {/* Content — always centered in the full viewport, above curtains */}
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-8">
+        <div
+          ref={logoRef}
+          className="font-mono font-bold text-white tracking-[0.35em] text-2xl"
+        >
+          TYL.
+        </div>
+        <div
+          ref={counterRef}
+          className="font-headline font-extrabold leading-none tabular-nums text-white"
+          style={{ fontSize: "clamp(64px,18vw,160px)" }}
+        >
+          000
+        </div>
+
+        {/* Loading bar */}
+        <div className="w-full max-w-[320px] h-[1px] bg-white/10 relative overflow-hidden">
           <div
-            ref={taglineRef}
-            className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/30"
-          >
-            Portfolio — Edwin Tan
-          </div>
+            ref={barFillRef}
+            className="absolute top-0 left-0 h-full bg-brand-accent"
+            style={{ width: "0%", transition: "none" }}
+          />
+        </div>
+        <div
+          ref={taglineRef}
+          className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/30"
+        >
+          Portfolio — Edwin Tan
         </div>
       </div>
     </div>

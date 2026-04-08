@@ -55,8 +55,8 @@ export default function About() {
             lines.forEach((el, index) => {
               const chars = Math.max(el.textContent?.length ?? 8, 1);
               // 40–75 ms per character — varies per line for a human feel
-              const msPerChar = 90 + Math.random() * 50;
-              const dur = Math.max((chars * msPerChar) / 1000, 0.12);
+              const msPerChar = 65 + Math.random() * 30;
+              const dur = Math.max((chars * msPerChar) / 1000, 0.10);
               const cursor = cursors[index];
 
               if (cursor) {

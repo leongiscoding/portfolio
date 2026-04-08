@@ -229,17 +229,26 @@ export default function CustomCursor() {
     let needsStamp = false;
 
     const onMove = (e: MouseEvent) => {
-      // Pause paint effect when hovering interactive or text elements
-      const target = e.target as Element;
-      if (target.closest("a, button, input, textarea, select, [role='button'], p, h1, h2, h3, h4, h5, h6, li, label, code")) {
+      // Only active inside the contact section
+      const contact = document.querySelector("#contact");
+      const rect    = contact?.getBoundingClientRect();
+      const inContact = rect &&
+        e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top  && e.clientY <= rect.bottom;
+
+      if (!inContact) {
         needsStamp = false;
+        mount.style.opacity = "0";
         return;
       }
+
+      mount.style.opacity = "1";
+
       nx = e.clientX / window.innerWidth;
       ny = e.clientY / window.innerHeight;
       needsStamp = true;
     };
-    const onLeave = () => touch.reset();
+    const onLeave = () => { touch.reset(); mount.style.opacity = "0"; };
 
     window.addEventListener("mousemove", onMove);
     document.addEventListener("mouseleave", onLeave);
