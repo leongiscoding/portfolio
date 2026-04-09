@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code — per-machine personal config and dev server log only;
+# CLAUDE.md, settings.json, hooks/, commands/, skills/ ARE checked in.
+.claude/settings.local.json
+.claude/dev.log
