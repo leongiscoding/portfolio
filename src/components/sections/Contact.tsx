@@ -9,6 +9,27 @@ const socials = [
   { label: "WhatsApp", href: "https://wa.me/60183631583" },
 ];
 
+const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
+
+// IANA reserved + common disposable/throwaway domains
+const BLOCKED_DOMAINS = new Set([
+  "example.com","example.org","example.net",
+  "test.com","test.org","test.net",
+  "fake.com","fake.org","fake.net",
+  "mailinator.com","guerrillamail.com","guerrillamail.net","guerrillamail.org",
+  "guerrillamail.de","guerrillamail.biz","guerrillamail.info",
+  "tempmail.com","temp-mail.org","tempinbox.com",
+  "throwaway.email","throwam.com","trashmail.com","trashmail.me","trashmail.net","trashmail.io",
+  "yopmail.com","yopmail.fr","cool.fr.nf","jetable.fr.nf","nospam.ze.tc","nomail.xl.cx",
+  "mega.zik.dj","speed.1s.fr","courriel.fr.nf","moncourrier.fr.nf","monemail.fr.nf",
+  "10minutemail.com","10minutemail.net","10minutemail.org","10minutemail.de",
+  "mailnull.com","maildrop.cc","mailnesia.com","discard.email","dispostable.com",
+  "sharklasers.com","guerrillamailblock.com","grr.la","spam4.me","spamgourmet.com",
+  "spamgourmet.net","spamgourmet.org","spamspot.com","spamfree24.org",
+  "getairmail.com","filzmail.com","nwytg.net","mail.tm","emailondeck.com",
+  "getnada.com","mohmal.com","mintemail.com","mailforspam.com",
+]);
+
 interface FormState { name: string; email: string; message: string; }
 interface Errors    { name?: string; email?: string; message?: string; }
 
@@ -21,11 +42,12 @@ export default function Contact() {
   const socialsRef  = useRef<HTMLDivElement>(null);
   const toastRef    = useRef<HTMLDivElement>(null);
 
-  const [form,      setForm]      = useState<FormState>({ name: "", email: "", message: "" });
-  const [errors,    setErrors]    = useState<Errors>({});
-  const [toast,     setToast]     = useState<{ type: "error" | "success"; msg: string } | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [timestamp, setTimestamp] = useState("");
+  const [form,         setForm]         = useState<FormState>({ name: "", email: "", message: "" });
+  const [errors,       setErrors]       = useState<Errors>({});
+  const [toast,        setToast]        = useState<{ type: "error" | "success"; msg: string } | null>(null);
+  const [submitted,    setSubmitted]    = useState(false);
+  const [timestamp,    setTimestamp]    = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const successRef     = useRef<HTMLDivElement>(null);
   const successTextRef = useRef<HTMLDivElement>(null);
   const twLine1Ref     = useRef<HTMLSpanElement>(null);
@@ -130,14 +152,16 @@ export default function Contact() {
       e.name = "Name is required.";
     if (!form.email.trim())
       e.email = "Email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    else if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(form.email))
       e.email = "Please enter a valid email address.";
+    else if (BLOCKED_DOMAINS.has(form.email.split("@")[1].toLowerCase()))
+      e.email = "Please use a real email address.";
     if (!form.message.trim())
       e.message = "Message cannot be empty.";
     return e;
   }
 
-  function handleSubmit(ev: React.FormEvent) {
+  async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
@@ -145,11 +169,36 @@ export default function Contact() {
       setToast({ type: "error", msg: "Please fix the errors below." });
       return;
     }
-    // Submission placeholder — swap with your API call
-    setForm({ name: "", email: "", message: "" });
-    setErrors({});
-    setTimestamp(new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC");
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("message", form.message);
+      formData.append("from_name", "Portfolio Contact Form");
+      formData.append("subject", `New message from ${form.name}`);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setForm({ name: "", email: "", message: "" });
+        setErrors({});
+        setTimestamp(new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC");
+        setSubmitted(true);
+      } else {
+        setToast({ type: "error", msg: data.message || "Transmission failed. Please try again." });
+      }
+    } catch {
+      setToast({ type: "error", msg: "Network error. Please try again." });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const field = (key: keyof FormState) => ({
@@ -354,9 +403,10 @@ export default function Contact() {
             <div className="form-field md:col-span-2 pt-4">
               <button
                 type="submit"
-                className="w-full bg-brand-accent text-white py-6 rounded-full font-headline font-extrabold text-xl hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-2xl shadow-brand-accent/20"
+                disabled={isSubmitting}
+                className="w-full bg-brand-accent text-white py-6 rounded-full font-headline font-extrabold text-xl hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-2xl shadow-brand-accent/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Initialize Project
+                {isSubmitting ? "Transmitting…" : "Initialize Project"}
               </button>
             </div>
           </form>
