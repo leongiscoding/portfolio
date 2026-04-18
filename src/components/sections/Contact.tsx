@@ -9,6 +9,8 @@ const socials = [
   { label: "WhatsApp", href: "https://wa.me/60183631583" },
 ];
 
+const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
+
 interface FormState { name: string; email: string; message: string; }
 interface Errors    { name?: string; email?: string; message?: string; }
 
@@ -21,11 +23,12 @@ export default function Contact() {
   const socialsRef  = useRef<HTMLDivElement>(null);
   const toastRef    = useRef<HTMLDivElement>(null);
 
-  const [form,      setForm]      = useState<FormState>({ name: "", email: "", message: "" });
-  const [errors,    setErrors]    = useState<Errors>({});
-  const [toast,     setToast]     = useState<{ type: "error" | "success"; msg: string } | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [timestamp, setTimestamp] = useState("");
+  const [form,         setForm]         = useState<FormState>({ name: "", email: "", message: "" });
+  const [errors,       setErrors]       = useState<Errors>({});
+  const [toast,        setToast]        = useState<{ type: "error" | "success"; msg: string } | null>(null);
+  const [submitted,    setSubmitted]    = useState(false);
+  const [timestamp,    setTimestamp]    = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const successRef     = useRef<HTMLDivElement>(null);
   const successTextRef = useRef<HTMLDivElement>(null);
   const twLine1Ref     = useRef<HTMLSpanElement>(null);
@@ -137,7 +140,7 @@ export default function Contact() {
     return e;
   }
 
-  function handleSubmit(ev: React.FormEvent) {
+  async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
@@ -145,11 +148,36 @@ export default function Contact() {
       setToast({ type: "error", msg: "Please fix the errors below." });
       return;
     }
-    // Submission placeholder — swap with your API call
-    setForm({ name: "", email: "", message: "" });
-    setErrors({});
-    setTimestamp(new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC");
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("message", form.message);
+      formData.append("from_name", "Portfolio Contact Form");
+      formData.append("subject", `New message from ${form.name}`);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setForm({ name: "", email: "", message: "" });
+        setErrors({});
+        setTimestamp(new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC");
+        setSubmitted(true);
+      } else {
+        setToast({ type: "error", msg: data.message || "Transmission failed. Please try again." });
+      }
+    } catch {
+      setToast({ type: "error", msg: "Network error. Please try again." });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const field = (key: keyof FormState) => ({
@@ -354,9 +382,10 @@ export default function Contact() {
             <div className="form-field md:col-span-2 pt-4">
               <button
                 type="submit"
-                className="w-full bg-brand-accent text-white py-6 rounded-full font-headline font-extrabold text-xl hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-2xl shadow-brand-accent/20"
+                disabled={isSubmitting}
+                className="w-full bg-brand-accent text-white py-6 rounded-full font-headline font-extrabold text-xl hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-2xl shadow-brand-accent/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Initialize Project
+                {isSubmitting ? "Transmitting…" : "Initialize Project"}
               </button>
             </div>
           </form>
