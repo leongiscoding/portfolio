@@ -11,6 +11,35 @@ const socials = [
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
 
+// Major providers — Levenshtein distance ≤ 2 from entered domain triggers a suggestion
+const KNOWN_PROVIDERS = [
+  "gmail.com","googlemail.com","yahoo.com","ymail.com",
+  "outlook.com","hotmail.com","live.com","msn.com",
+  "icloud.com","me.com","mac.com",
+  "aol.com","protonmail.com","proton.me",
+  "zoho.com","gmx.com","mail.com","fastmail.com",
+];
+
+function findProviderTypo(domain: string): string | null {
+  const prev = Array.from({ length: domain.length + 1 }, (_, j) => j);
+  for (const provider of KNOWN_PROVIDERS) {
+    if (domain === provider) return null;
+    if (Math.abs(domain.length - provider.length) > 3) continue;
+    const row = new Array<number>(domain.length + 1);
+    let cur = prev.slice();
+    for (let i = 1; i <= provider.length; i++) {
+      row[0] = i;
+      for (let j = 1; j <= domain.length; j++)
+        row[j] = provider[i-1] === domain[j-1]
+          ? cur[j-1]
+          : 1 + Math.min(cur[j], row[j-1], cur[j-1]);
+      [cur] = [row.slice()];
+    }
+    if (cur[domain.length] <= 2) return provider;
+  }
+  return null;
+}
+
 // IANA reserved + common disposable/throwaway domains
 const BLOCKED_DOMAINS = new Set([
   "example.com","example.org","example.net",
@@ -156,6 +185,10 @@ export default function Contact() {
       e.email = "Please enter a valid email address.";
     else if (BLOCKED_DOMAINS.has(form.email.split("@")[1].toLowerCase()))
       e.email = "Please use a real email address.";
+    else {
+      const suggestion = findProviderTypo(form.email.split("@")[1].toLowerCase());
+      if (suggestion) e.email = `Did you mean @${suggestion}?`;
+    }
     if (!form.message.trim())
       e.message = "Message cannot be empty.";
     return e;
