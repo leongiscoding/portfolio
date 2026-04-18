@@ -11,6 +11,25 @@ const socials = [
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
 
+// IANA reserved + common disposable/throwaway domains
+const BLOCKED_DOMAINS = new Set([
+  "example.com","example.org","example.net",
+  "test.com","test.org","test.net",
+  "fake.com","fake.org","fake.net",
+  "mailinator.com","guerrillamail.com","guerrillamail.net","guerrillamail.org",
+  "guerrillamail.de","guerrillamail.biz","guerrillamail.info",
+  "tempmail.com","temp-mail.org","tempinbox.com",
+  "throwaway.email","throwam.com","trashmail.com","trashmail.me","trashmail.net","trashmail.io",
+  "yopmail.com","yopmail.fr","cool.fr.nf","jetable.fr.nf","nospam.ze.tc","nomail.xl.cx",
+  "mega.zik.dj","speed.1s.fr","courriel.fr.nf","moncourrier.fr.nf","monemail.fr.nf",
+  "10minutemail.com","10minutemail.net","10minutemail.org","10minutemail.de",
+  "mailnull.com","maildrop.cc","mailnesia.com","discard.email","dispostable.com",
+  "sharklasers.com","guerrillamailblock.com","grr.la","spam4.me","spamgourmet.com",
+  "spamgourmet.net","spamgourmet.org","spamspot.com","spamfree24.org",
+  "getairmail.com","filzmail.com","nwytg.net","mail.tm","emailondeck.com",
+  "getnada.com","mohmal.com","mintemail.com","mailforspam.com",
+]);
+
 interface FormState { name: string; email: string; message: string; }
 interface Errors    { name?: string; email?: string; message?: string; }
 
@@ -133,8 +152,10 @@ export default function Contact() {
       e.name = "Name is required.";
     if (!form.email.trim())
       e.email = "Email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    else if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(form.email))
       e.email = "Please enter a valid email address.";
+    else if (BLOCKED_DOMAINS.has(form.email.split("@")[1].toLowerCase()))
+      e.email = "Please use a real email address.";
     if (!form.message.trim())
       e.message = "Message cannot be empty.";
     return e;
