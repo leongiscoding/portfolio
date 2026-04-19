@@ -63,6 +63,7 @@ convention.** When you need to branch, commit, merge, or release:
 4. **Conventional Commits only:** `type(scope): summary` — e.g. `feat(hero): add particle field`, `fix(about): typewriter cursor desync`.
 5. **Never** `--no-verify`, `--no-gpg-sign`, `git push --force`, or `git reset --hard` on `main`.
 6. **Never** push or open a PR unless the user explicitly asks.
+7. **Never create branches via `git worktree add`.** Use the standard `github-workflow` skill flow (plain `git checkout -b <prefix>/<name>` from `main`). Branches created inside a worktree fragment env files and dev-server state, are hidden from the main checkout's default view, and are easy to orphan when the worktree is pruned. If a previous session created worktrees under `.claude/worktrees/`, treat them as cleanup candidates, not as a place to do new work.
 
 ### Branch prefix → user intent mapping
 
@@ -183,6 +184,7 @@ The clean `src/` tree is fragile. The following rules keep it that way:
 8. **Forbidden trees** (the PreToolUse hook blocks reads): `.next/`, `.git/`, `node_modules/` (except `node_modules/next/dist/docs/**`), `build/`, `out/`, `.vercel/`, `*.tsbuildinfo`, `package-lock.json`.
 9. **Generated files are never edited by hand:** `.next/`, `next-env.d.ts`, `package-lock.json`, anything under `node_modules/`.
 10. **Empty folders with `.gitkeep`** (`hooks/`, `animations/`, `constants/`, `types/`, `styles/`) are intentional placeholders. Leave the `.gitkeep` until the folder has a real file.
+11. **`.env*` files live at the repo root ONLY.** Never create `.env.local`, `.env.development.local`, etc. inside `.claude/worktrees/` — they're invisible to other checkouts and vanish when the worktree is pruned. A committed [.env.example](./.env.example) at the repo root is the source of truth for which keys the project expects; copy it to `.env.local` and fill in real values. `.env*.local` stays gitignored.
 
 ### Configuration & packages — keep them clean
 
@@ -266,6 +268,8 @@ don't disable the hook in `settings.json`. The hook scripts are in
 
 - Do **not** run `next dev` / `npm run dev` directly. Use `/dev`.
 - Do **not** make changes on `main`. Branch first via the `github-workflow` skill.
+- Do **not** create branches via `git worktree add`. Use plain `git checkout -b` per the `github-workflow` skill.
+- Do **not** place `.env*` files anywhere except the repo root. Worktrees must not have their own env.
 - Do **not** use `--no-verify`, force push, or `git reset --hard` on `main`.
 - Do **not** add files at `src/` root, or under `src/app/` other than App Router primitives.
 - Do **not** read or grep `.next/`, `node_modules/` (except `next/dist/docs/`), `*.tsbuildinfo`, `package-lock.json`.
