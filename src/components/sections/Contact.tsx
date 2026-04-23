@@ -267,15 +267,15 @@ export default function Contact() {
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto relative z-10 text-center">
-        <div ref={labelRef} className="flex flex-col items-center gap-4 mb-8">
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div ref={labelRef} className="flex flex-col items-start gap-4 mb-8">
           <div className="w-12 h-[1px] bg-brand-accent" />
           <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-brand-accent">
             Final Connect
           </span>
         </div>
 
-        <h2 className="font-headline font-extrabold text-[clamp(40px,7vw,82px)] leading-none tracking-tight mb-12">
+        <h2 className="font-headline font-extrabold text-[clamp(40px,7vw,82px)] leading-none tracking-tight mb-12 text-left">
           <div className="overflow-hidden inline-block mr-4">
             <div ref={word1Ref}>Let&apos;s build</div>
           </div>
@@ -311,14 +311,14 @@ export default function Contact() {
             </div>
 
             {/* ── Main body ── */}
-            <div ref={successTextRef} className="px-8 py-12 flex flex-col items-center gap-8">
+            <div ref={successTextRef} className="px-5 md:px-8 py-7 md:py-12 flex flex-col items-center gap-5 md:gap-8">
 
               {/* Heading */}
               <div className="text-center">
                 <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-brand-accent/50 block mb-4">
                   STATUS: UPLINK ACTIVE
                 </span>
-                <h3 className="font-headline font-extrabold text-[clamp(36px,6vw,68px)] tracking-tight uppercase leading-[0.9]">
+                <h3 className="font-headline font-extrabold text-[clamp(22px,6vw,68px)] tracking-tight uppercase leading-[0.9]">
                   <span ref={twLine1Ref} className="block">UPLINK</span>
                   <span ref={twLine2Ref} className="block">
                     ESTABLISHED
@@ -437,7 +437,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-brand-accent text-white py-6 rounded-full font-headline font-extrabold text-xl hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-2xl shadow-brand-accent/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full bg-brand-accent text-white py-4 md:py-6 rounded-full font-headline font-extrabold text-base md:text-xl hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-2xl shadow-brand-accent/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {isSubmitting ? "Transmitting…" : "Initialize Project"}
               </button>

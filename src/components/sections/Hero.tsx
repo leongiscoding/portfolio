@@ -133,10 +133,6 @@ export default function Hero({ ready }: { ready: boolean }) {
             <span className="text-on-surface font-bold">Full Stack Developer</span>
             <span className="animate-pulse text-brand-accent">_</span>
           </div>
-          <p className="max-w-md text-on-surface-variant leading-relaxed">
-            Architecting high-performance digital experiences where precision
-            engineering meets minimalist design.
-          </p>
         </div>
 
         {/* CTAs — magnetic */}

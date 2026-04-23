@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 export default function About() {
@@ -105,15 +105,17 @@ export default function About() {
   }, []);
 
   const codeLines = [
-    <><span className="text-[#C678DD]">const</span> <span className="text-[#E06C75]">developer</span> = {"{"}</>,
-    <span className="ml-4">name: <span className="text-[#98C379]">&apos;Edwin Tan&apos;</span>,</span>,
-    <span className="ml-4">focus: <span className="text-[#98C379]">&apos;Full Stack Architect&apos;</span>,</span>,
-    <span className="ml-4">stack: [</span>,
-    <span className="ml-8 text-[#D19A66]">&apos;React&apos;, &apos;TypeScript&apos;,</span>,
-    <span className="ml-8 text-[#D19A66]">&apos;Node.js&apos;, &apos;PostgreSQL&apos;</span>,
-    <span className="ml-4">],</span>,
-    <span className="ml-4">passionate: <span className="text-[#E06C75]">true</span></span>,
-    <>{"}"};</>,
+    <Fragment key="l1"><span className="text-[#C678DD]">const</span> <span className="text-[#E06C75]">developer</span> = {"{"}</Fragment>,
+    <span key="l2" className="ml-4">name: <span className="text-[#98C379]">&apos;Edwin Tan&apos;</span>,</span>,
+    <span key="l3" className="ml-4">focus: <span className="text-[#98C379]">&apos;Full Stack Developer&apos;</span>,</span>,
+    <span key="l4" className="ml-4">location: <span className="text-[#98C379]">&apos;Malaysia&apos;</span>,</span>,
+    <span key="l5" className="ml-4">languages: {"{"}</span>,
+    <span key="l6" className="ml-8">mandarin: <span className="text-[#98C379]">&apos;Native&apos;</span>,</span>,
+    <span key="l7" className="ml-8">malay: <span className="text-[#98C379]">&apos;Fluent&apos;</span>,</span>,
+    <span key="l7b" className="ml-8">english: <span className="text-[#98C379]">&apos;Fluent&apos;</span>,</span>,
+    <span key="l7c" className="ml-4">{"}"}</span>,
+    <span key="l8" className="ml-4">passionate: <span className="text-[#E06C75]">true</span></span>,
+    <Fragment key="l9">{"}"};</Fragment>,
   ];
 
   return (
@@ -167,13 +169,13 @@ export default function About() {
             <span className="font-mono text-[10px] text-white/40">developer.ts</span>
           </div>
 
-          <div className="p-8 font-mono text-[13px] leading-relaxed">
+          <div className="p-4 md:p-8 font-mono text-[11px] md:text-[13px] leading-relaxed overflow-x-hidden">
             {codeLines.map((line, i) => (
               <div key={i} className="code-line relative flex gap-1 items-center">
-                <span className="text-white/20 select-none w-9 shrink-0">
+                <span className="text-white/20 select-none w-7 md:w-9 shrink-0">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <code className="text-white inline-block overflow-hidden">{line}</code>
+                <code className="text-white inline-block overflow-hidden whitespace-nowrap">{line}</code>
                 <span className="tw-cursor absolute top-1/2 -translate-y-1/2 w-[2px] h-[1em] bg-brand-accent opacity-0" />
               </div>
             ))}

@@ -70,7 +70,7 @@ export default function Projects() {
       // Pin section and scrub the master timeline
       ScrollTrigger.create({
         trigger: sectionRef.current,
-        start: "top top",
+        start: "top top+=64",
         end: () => `+=${window.innerHeight * cards.length * 2}`,
         pin: true,
         scrub: 1.2,
@@ -87,7 +87,7 @@ export default function Projects() {
     <section
       ref={sectionRef}
       id="projects"
-      className="relative h-screen bg-[#080808] text-white flex flex-col overflow-hidden"
+      className="relative h-[75vh] md:h-screen bg-[#080808] text-white flex flex-col overflow-hidden"
     >
       {/* Header */}
       <div

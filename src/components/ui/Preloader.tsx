@@ -100,7 +100,7 @@ export default function Preloader({
           ref={taglineRef}
           className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/30"
         >
-          Portfolio — Edwin Tan
+          Edwin Tan
         </div>
       </div>
     </div>

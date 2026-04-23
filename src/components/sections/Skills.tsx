@@ -1,7 +1,14 @@
+// COMPONENT: <Skills>
+// OWNS: "Tech Ecosystem" section with a scroll-driven card-deck reveal
+//   (4 face-down cards; each scroll tick flips the top card to a category,
+//    then shuffles it away before flipping the next one).
+// DO NOT TOUCH FROM OUTSIDE: deckRef / cardRefs and the pinned ScrollTrigger
+//   timeline — the animation coordinates its own start/end boundaries.
+// CALLED BY: src/app/page.tsx
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const skills = [
   {
@@ -14,7 +21,7 @@ const skills = [
     index: "02",
     icon: "dns",
     title: "Backend",
-    tags: ["PHP", "MySQL", "Firebase", "PostgreSQL", "Node.js", "REST API"],
+    tags: ["PHP", "MySQL", "Firebase", "PostgreSQL", "REST API"],
   },
   {
     index: "03",
@@ -26,7 +33,7 @@ const skills = [
     index: "04",
     icon: "polyline",
     title: "Tools & Design",
-    tags: ["Figma", "Git", "GitLab", "Postman", "GSAP", "Three.js", "Draw.io"],
+    tags: ["Figma", "Git", "GitLab", "Postman", "GSAP", "Draw.io"],
   },
 ];
 
@@ -37,10 +44,18 @@ const marqueeItems = [
   "MySQL", "PostgreSQL", "PHP", "Dart", "TensorFlow", "Git", "Node.js",
 ];
 
+const stackOffsets = [
+  { x: -10, y: -8, rotate: -4 },
+  { x:   6, y: -3, rotate:  2.5 },
+  { x:  -4, y:  5, rotate: -1.5 },
+  { x:   8, y: 10, rotate:  3.5 },
+];
+
 export default function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef  = useRef<HTMLDivElement>(null);
-  const cardsRef   = useRef<HTMLDivElement>(null);
+  const deckRef    = useRef<HTMLDivElement>(null);
+  const cardRefs   = useRef<(HTMLDivElement | null)[]>(Array(skills.length).fill(null));
   const marqueeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,26 +73,59 @@ export default function Skills() {
         },
       });
 
-      // Cards: fire as soon as the grid enters the viewport bottom — no blank gap
-      gsap.fromTo(
-        cardsRef.current!.children,
-        { opacity: 0, y: 48, scale: 0.94 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.1,
-          duration: 0.75,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: cardsRef.current,
-            start: "top bottom", // triggers the instant ANY part enters the viewport
-            once: true,
-          },
-        }
-      );
+      const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
 
-      // Infinite marquee
+      // Initial state: whole deck face-down and offset (poker-stack look).
+      cards.forEach((card, i) => {
+        const off = stackOffsets[i];
+        gsap.set(card, {
+          rotationY: 180,
+          x: off.x,
+          y: off.y,
+          rotation: off.rotate,
+          zIndex: cards.length - i,
+          opacity: 1,
+        });
+      });
+
+      // One pinned, scroll-scrubbed timeline that flips and shuffles each card.
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: deckRef.current,
+          start: "top top+=80",
+          end: () => `+=${cards.length * 900}`,
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      cards.forEach((card, i) => {
+        // Flip up — top card becomes face-up and settles to centre.
+        tl.to(card, {
+          rotationY: 0,
+          x: 0,
+          y: 0,
+          rotation: 0,
+          duration: 1,
+          ease: "power3.out",
+        });
+
+        // Dwell so the user can read the category.
+        tl.to({}, { duration: 0.6 });
+
+        // Shuffle every card off-screen after the dwell.
+        tl.to(card, {
+          x: () => -Math.max(window.innerWidth * 0.7, 600),
+          rotation: -22,
+          opacity: 0,
+          duration: 0.9,
+          ease: "power2.in",
+        });
+      });
+
+      // Infinite marquee (unchanged)
       if (marqueeRef.current) {
         const totalWidth = marqueeRef.current.scrollWidth / 2;
         gsap.to(marqueeRef.current, {
@@ -87,6 +135,9 @@ export default function Skills() {
           repeat: -1,
         });
       }
+
+      // Ensure triggers recalc after layout (fonts/images).
+      ScrollTrigger.refresh();
     });
 
     return () => ctx.revert();
@@ -96,13 +147,13 @@ export default function Skills() {
     <section
       id="skills"
       ref={sectionRef}
-      className="py-[clamp(72px,10vw,110px)] bg-[#0D0D0D] overflow-hidden"
+      className="bg-[#0D0D0D] overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-[clamp(24px,6vw,100px)]">
-        {/* Header */}
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-[clamp(24px,6vw,100px)] pt-[clamp(72px,10vw,110px)]">
         <div
           ref={headerRef}
-          className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16"
+          className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-4"
         >
           <div>
             <div className="flex items-center gap-3 mb-4">
@@ -116,48 +167,87 @@ export default function Skills() {
             </h2>
           </div>
           <p className="max-w-md text-white/40 font-mono text-[13px] leading-relaxed uppercase tracking-wider">
-            I leverage the most performant tools in the industry to build
-            future-ready web applications.
+            Scroll to deal the deck — one category at a time.
           </p>
         </div>
+      </div>
 
-        {/* Cards grid */}
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16"
-        >
-          {skills.map(({ index, icon, title, tags }) => (
+      {/* Pinned deck viewport */}
+      <div
+        ref={deckRef}
+        className="relative h-screen w-full flex items-start justify-center pt-[clamp(8px,4vh,48px)] px-6"
+        style={{ perspective: "1800px" }}
+      >
+        <div className="relative w-[min(360px,86vw)] aspect-[3/4.2]">
+          {skills.map(({ index, icon, title, tags }, i) => (
             <div
               key={title}
-              className="relative group bg-white/[0.04] border border-white/10 rounded-[20px] p-7 overflow-hidden hover:border-brand-accent/60 hover:bg-white/[0.07] transition-all duration-500"
+              ref={(el) => { cardRefs.current[i] = el; }}
+              className="absolute inset-0 rounded-[22px] will-change-transform"
+              style={{ transformStyle: "preserve-3d" }}
             >
-              {/* Faint index watermark */}
-              <span
-                className="absolute top-3 right-4 font-headline font-extrabold text-white/[0.05] select-none leading-none pointer-events-none group-hover:text-white/[0.09] transition-all duration-500"
-                style={{ fontSize: "clamp(56px, 7vw, 80px)" }}
-                aria-hidden
+              {/* Card back (poker face-down) */}
+              <div
+                className="absolute inset-0 rounded-[22px] bg-gradient-to-br from-[#181818] to-[#080808] border border-white/10 overflow-hidden"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                }}
               >
-                {index}
-              </span>
-
-              {/* Icon */}
-              <div className="w-11 h-11 rounded-[14px] bg-white/10 flex items-center justify-center mb-5 group-hover:bg-brand-accent group-hover:text-white transition-all duration-300 group-hover:rotate-6 group-hover:scale-110 text-white/60">
-                <span className="material-symbols-outlined text-[22px]">{icon}</span>
+                <div
+                  className="absolute inset-0 opacity-[0.06]"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(45deg, #fff 0 2px, transparent 2px 16px), repeating-linear-gradient(-45deg, #fff 0 2px, transparent 2px 16px)",
+                  }}
+                />
+                <div className="absolute inset-4 rounded-[18px] border border-white/10" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-6">
+                  <div className="font-headline font-extrabold text-white/15 text-[72px] leading-none">
+                    TYL.
+                  </div>
+                  <div className="w-16 h-[1px] bg-brand-accent/50" />
+                  <div className="font-mono text-[10px] uppercase tracking-[0.32em] text-white/40">
+                    Tech Deck
+                  </div>
+                </div>
               </div>
 
-              {/* Title */}
-              <h3 className="font-headline font-bold text-white text-xl mb-4">{title}</h3>
+              {/* Card front (category) */}
+              <div
+                className="absolute inset-0 rounded-[22px] bg-[#121212] border border-white/10 overflow-hidden p-8"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                }}
+              >
+                <span
+                  className="absolute top-4 right-5 font-headline font-extrabold text-white/[0.06] select-none leading-none pointer-events-none"
+                  style={{ fontSize: "clamp(72px, 9vw, 112px)" }}
+                  aria-hidden
+                >
+                  {index}
+                </span>
 
-              {/* Tech tags */}
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="font-mono text-[10px] uppercase tracking-wider text-white/40 bg-white/5 border border-white/8 px-2.5 py-1 rounded-full group-hover:border-white/15 transition-colors duration-300"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                <div className="w-12 h-12 rounded-[14px] bg-brand-accent/20 flex items-center justify-center mb-6 text-brand-accent">
+                  <span className="material-symbols-outlined text-[26px]">{icon}</span>
+                </div>
+
+                <h3 className="font-headline font-bold text-white text-2xl mb-6">
+                  {title}
+                </h3>
+
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-mono text-[10px] uppercase tracking-wider text-white/55 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
@@ -165,7 +255,7 @@ export default function Skills() {
       </div>
 
       {/* Infinite marquee */}
-      <div className="overflow-hidden border-y border-white/8 py-5">
+      <div className="overflow-hidden border-y border-white/8 py-5 mt-[clamp(48px,8vw,96px)]">
         <div ref={marqueeRef} className="flex gap-12 whitespace-nowrap w-max">
           {marqueeItems.map((item, i) => (
             <span

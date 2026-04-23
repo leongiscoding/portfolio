@@ -7,7 +7,7 @@ const experiences = [
   {
     period: "MAY 2025 — AUG 2025",
     role: "Frontend Developer Intern",
-    company: "COS Great Trading — Cheras, Selangor",
+    company: "COS Great Trading — Kuala Lumpur",
     desc: "Designed and developed UI for a household property management system with reusable components and Figma prototypes. Supported 5 concurrent clients with landing pages and CMS maintenance. Assisted in CMS migration integrating CDN libraries including Bootstrap, GSAP, and Three.js.",
     active: true,
   },
